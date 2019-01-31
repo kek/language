@@ -21,22 +21,26 @@ defmodule Language do
   iex> compile([{:atom, 1, 'aliens'}, {:atom, 1, 'built'}, {:atom, 1, 'this'}], Mathematician)
   {:error, "Unknown atom 'aliens' at line 1 with parameters: ['built', 'this']"}
   iex> compile([{:atom, 1, '<?php'}], PHP)
-  {:error, "The module PHP doesn't exist, or it doesn't implement call({name, params})"}
+  {:error, "The module PHP doesn't exist"}
   iex> compile([{:atom, 1, 'public'}], Java)
-  {:error, "The module LanguageTest.Java doesn't exist, or it doesn't implement call({name, params})"}
+  {:error, "The module LanguageTest.Java doesn't implement call({name, params})"}
   """
   def compile([{type, line, name} | params], library) do
-    values = Enum.map(params, &value_of/1)
+    if :erlang.module_loaded(library) do
+      values = Enum.map(params, &value_of/1)
 
-    try do
-      {:ok, library.call({name, values})}
-    rescue
-      UndefinedFunctionError ->
-        {:error,
-         "The module #{inspect(library)} doesn't exist, or it doesn't implement call({name, params})"}
+      try do
+        {:ok, library.call({name, values})}
+      rescue
+        UndefinedFunctionError ->
+          {:error, "The module #{inspect(library)} doesn't implement call({name, params})"}
 
-      FunctionClauseError ->
-        {:error, "Unknown #{type} '#{name}' at line #{line} with parameters: #{inspect(values)}"}
+        FunctionClauseError ->
+          {:error,
+           "Unknown #{type} '#{name}' at line #{line} with parameters: #{inspect(values)}"}
+      end
+    else
+      {:error, "The module #{inspect(library)} doesn't exist"}
     end
   end
 
