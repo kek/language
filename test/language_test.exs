@@ -18,7 +18,8 @@ defmodule LanguageTest do
       assert Language.run("(add 1 2)", Mathematician) == 3
 
       assert Language.run("(aliens built this)", Mathematician) ==
-               {:error, "Unknown atom 'aliens' at line 1 with parameters: ['built', 'this']"}
+               {:error,
+                "Unknown function (atom) 'aliens' at line 1 with parameters: ['built', 'this']"}
     end
   end
 end

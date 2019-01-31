@@ -19,7 +19,7 @@ defmodule Language do
   iex> compile([{:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}], Mathematician)
   {:ok, {:+, [], [1, 2]}}
   iex> compile([{:atom, 1, 'aliens'}, {:atom, 1, 'built'}, {:atom, 1, 'this'}], Mathematician)
-  {:error, "Unknown atom 'aliens' at line 1 with parameters: ['built', 'this']"}
+  {:error, "Unknown function (atom) 'aliens' at line 1 with parameters: ['built', 'this']"}
   iex> compile([{:atom, 1, '<?php'}], PHP)
   {:error, "The module PHP doesn't exist"}
   iex> compile([{:atom, 1, 'public'}], Java)
@@ -37,7 +37,9 @@ defmodule Language do
 
         FunctionClauseError ->
           {:error,
-           "Unknown #{type} '#{name}' at line #{line} with parameters: #{inspect(values)}"}
+           "Unknown function (#{type}) '#{name}' at line #{line} with parameters: #{
+             inspect(values)
+           }"}
       end
     else
       {:error, "The module #{inspect(library)} doesn't exist"}
