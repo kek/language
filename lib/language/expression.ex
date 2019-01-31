@@ -7,8 +7,8 @@ defmodule Language.Expression do
   iex> parse("(steve!)")
   {:ok, [{:atom, 1, 'steve!'}]}
 
-  iex> parse("(steve! steve!)")
-  {:ok, [{:atom, 1, 'steve!'}, {:atom, 1, 'steve!'}]}
+  iex> parse("(Steve! STEVE!)")
+  {:ok, [{:atom, 1, 'Steve!'}, {:atom, 1, 'STEVE!'}]}
 
   iex> parse("(steve! (steve!))")
   {:ok, [{:atom, 1, 'steve!'}, [{:atom, 1, 'steve!'}]]}
@@ -22,8 +22,8 @@ defmodule Language.Expression do
   iex> parse("(42)")
   {:ok, [{:number, 1, 42}]}
 
-  iex> parse("(pete_pete_pete)")
-  {:ok, [{:atom, 1, 'pete_pete_pete'}]}
+  iex> parse("(pete_pete.pete-pete)")
+  {:ok, [{:atom, 1, 'pete_pete.pete-pete'}]}
 
   iex> parse("(+ - / * % $ & = \\\\)")
   {:ok, [{:operator, 1, '+'},

@@ -8,7 +8,7 @@ to_binary({string, Line, Value}) ->
     {ok, ParsedString} = 'Elixir.Code':string_to_quoted(ValueBinary),
     {string, Line, ParsedString}.
 
--file("/Users/ke/.asdf/installs/erlang/21.2.2/lib/parsetools-2.1.8/include/yeccpre.hrl", 0).
+-file("/home/ke/.asdf/installs/erlang/21.2.4/lib/parsetools-2.1.8/include/yeccpre.hrl", 0).
 %%
 %% %CopyrightBegin%
 %%
