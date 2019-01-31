@@ -11,11 +11,14 @@ defmodule Language do
   Examples:
   iex> Language.run("(+ 1 2)")
   3
+  iex> Language.run("(aliens built this)")
+  {:error, "Unknown atom 'aliens' at line 1 with parameters: [{:atom, 1, 'built'}, {:atom, 1, 'this'}]"}
   """
   def run(source) do
-    {:ok, code} = Expression.parse(source)
-    {:ok, ast} = compile(code)
-    eval(ast)
+    with {:ok, code} <- Expression.parse(source),
+         {:ok, ast} <- compile(code) do
+      eval(ast)
+    end
   end
 
   @doc """
@@ -24,8 +27,14 @@ defmodule Language do
   Examples:
   iex> compile([{:operator, 1, '+'}, {:number, 1, 1}, {:number, 1, 2}])
   {:ok, {:+, [], [1, 2]}}
+  iex> compile([{:atom, 1, 'aliens'}, {:atom, 1, 'built'}, {:atom, 1, 'this'}])
+  {:error, "Unknown atom 'aliens' at line 1 with parameters: [{:atom, 1, 'built'}, {:atom, 1, 'this'}]"}
   """
   def compile([{:operator, 1, '+'} | params]), do: {:ok, ast(:+, params)}
+
+  def compile([{type, line, name} | params]) do
+    {:error, "Unknown #{type} '#{name}' at line #{line} with parameters: #{inspect(params)}"}
+  end
 
   defp ast(:+, params) do
     values = Enum.map(params, &value_of/1)
