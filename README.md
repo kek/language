@@ -37,10 +37,18 @@ iex(2)> Language.Expression.parse("(å)")
 {:error, {1, :symbolic_expression_lexer, {:illegal, [229]}}, 1} 
 iex(3)> Language.Expression.parse(")")
 {:error, {1, :symbolic_expression_parser, ['syntax error before: ', '\')\'']}}
-iex(4)> Language.run("(+ 1 1)")
+iex(4)>   defmodule Mathematician do
+...(4)>     @behaviour Language.Library
+...(4)>     def call({'add', params}), do: {:+, [], params}
+...(4)>   end
+{:module, Mathematician,
+ <<70, 79, 82, 49, 0, 0, 4, 164, 66, 69, 65, 77, 65, 116, 85, 56, 0, 0, 0, 134,
+    0, 0, 0, 14, 20, 69, 108, 105, 120, 105, 114, 46, 77, 97, 116, 104, 101, 109,
+       97, 116, 105, 99, 105, 97, 110, 8, 95, ...>>, {:call, 1}}
+iex(5)> Language.run("(add 1 1)", Mathematician)
 2
-iex(5)> Language.run("(public static void main)")
+iex(6)> Language.run("(public static void main)", Mathematician)
 {:error,
- "Unknown atom 'public' at line 1 with parameters: [{:atom, 1, 'static'}, {:atom, 1, 'void'}, {:atom, 1, 'main'}]"}
-iex(6)>
+ "Unknown atom 'public' at line 1 with parameters: ['static', 'void', 'main']"}
+iex(7)>
 ```
