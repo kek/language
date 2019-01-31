@@ -49,6 +49,6 @@ iex(5)> Language.run("(add 1 1)", Mathematician)
 2
 iex(6)> Language.run("(public static void main)", Mathematician)
 {:error,
- "Unknown atom 'public' at line 1 with parameters: ['static', 'void', 'main']"}
+ "Unknown function (atom) 'public' at line 1 with parameters: ['static', 'void', 'main']"}
 iex(7)>
 ```
