@@ -1,8 +1,12 @@
 -module(symbolic_expression_parser).
 -export([parse/1, parse_and_scan/1, format_error/1]).
--file("src/symbolic_expression_parser.yrl", 13).
+-file("src/symbolic_expression_parser.yrl", 14).
 
 to_integer({number, TokenLine, TokenChars}) -> {number, TokenLine, list_to_integer(TokenChars)}.
+to_binary({string, Line, Value}) ->
+    ValueBinary = 'Elixir.List':to_string(Value),
+    {ok, ParsedString} = 'Elixir.Code':string_to_quoted(ValueBinary),
+    {string, Line, ParsedString}.
 
 -file("/Users/ke/.asdf/installs/erlang/21.2.2/lib/parsetools-2.1.8/include/yeccpre.hrl", 0).
 %%
@@ -176,7 +180,7 @@ yecctoken2string(Other) ->
 
 
 
--file("src/symbolic_expression_parser.erl", 179).
+-file("src/symbolic_expression_parser.erl", 183).
 
 -dialyzer({nowarn_function, yeccpars2/7}).
 yeccpars2(0=S, Cat, Ss, Stack, T, Ts, Tzr) ->
@@ -197,10 +201,12 @@ yeccpars2(7=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_7(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(8=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_8(S, Cat, Ss, Stack, T, Ts, Tzr);
-%% yeccpars2(9=S, Cat, Ss, Stack, T, Ts, Tzr) ->
-%%  yeccpars2_9(S, Cat, Ss, Stack, T, Ts, Tzr);
-yeccpars2(10=S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_10(S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccpars2(9=S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_9(S, Cat, Ss, Stack, T, Ts, Tzr);
+%% yeccpars2(10=S, Cat, Ss, Stack, T, Ts, Tzr) ->
+%%  yeccpars2_10(S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccpars2(11=S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_11(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(Other, _, _, _, _, _, _) ->
  erlang:error({yecc_bug,"1.4",{missing_state_in_action_table, Other}}).
 
@@ -224,6 +230,8 @@ yeccpars2_2(S, number, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 7, Ss, Stack, T, Ts, Tzr);
 yeccpars2_2(S, operator, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 8, Ss, Stack, T, Ts, Tzr);
+yeccpars2_2(S, string, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 9, Ss, Stack, T, Ts, Tzr);
 yeccpars2_2(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  NewStack = yeccpars2_2_(Stack),
  yeccpars2_4(4, Cat, [2 | Ss], NewStack, T, Ts, Tzr).
@@ -233,7 +241,7 @@ yeccpars2_3(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
 
 -dialyzer({nowarn_function, yeccpars2_4/7}).
 yeccpars2_4(S, ')', Ss, Stack, T, Ts, Tzr) ->
- yeccpars1(S, 10, Ss, Stack, T, Ts, Tzr);
+ yeccpars1(S, 11, Ss, Stack, T, Ts, Tzr);
 yeccpars2_4(_, _, _, _, T, _, _) ->
  yeccerror(T).
 
@@ -245,9 +253,11 @@ yeccpars2_5(S, number, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 7, Ss, Stack, T, Ts, Tzr);
 yeccpars2_5(S, operator, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 8, Ss, Stack, T, Ts, Tzr);
+yeccpars2_5(S, string, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 9, Ss, Stack, T, Ts, Tzr);
 yeccpars2_5(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  NewStack = yeccpars2_5_(Stack),
- yeccpars2_9(_S, Cat, [5 | Ss], NewStack, T, Ts, Tzr).
+ yeccpars2_10(_S, Cat, [5 | Ss], NewStack, T, Ts, Tzr).
 
 yeccpars2_6(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccgoto_element(hd(Ss), Cat, Ss, Stack, T, Ts, Tzr).
@@ -260,13 +270,17 @@ yeccpars2_8(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccgoto_element(hd(Ss), Cat, Ss, Stack, T, Ts, Tzr).
 
 yeccpars2_9(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
- [_|Nss] = Ss,
  NewStack = yeccpars2_9_(Stack),
- yeccgoto_elements(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
+ yeccgoto_element(hd(Ss), Cat, Ss, NewStack, T, Ts, Tzr).
 
 yeccpars2_10(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
- [_,_|Nss] = Ss,
+ [_|Nss] = Ss,
  NewStack = yeccpars2_10_(Stack),
+ yeccgoto_elements(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
+
+yeccpars2_11(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ [_,_|Nss] = Ss,
+ NewStack = yeccpars2_11_(Stack),
  yeccgoto_list(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
 
 -dialyzer({nowarn_function, yeccgoto_element/7}).
@@ -279,7 +293,7 @@ yeccgoto_element(5, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_elements(2, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_4(4, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_elements(5=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_9(_S, Cat, Ss, Stack, T, Ts, Tzr).
+ yeccpars2_10(_S, Cat, Ss, Stack, T, Ts, Tzr).
 
 -dialyzer({nowarn_function, yeccgoto_list/7}).
 yeccgoto_list(0, Cat, Ss, Stack, T, Ts, Tzr) ->
@@ -304,7 +318,7 @@ yeccpars2_5_(__Stack0) ->
   end | __Stack0].
 
 -compile({inline,yeccpars2_7_/1}).
--file("src/symbolic_expression_parser.yrl", 6).
+-file("src/symbolic_expression_parser.yrl", 7).
 yeccpars2_7_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -312,20 +326,28 @@ yeccpars2_7_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_9_/1}).
--file("src/symbolic_expression_parser.yrl", 2).
+-file("src/symbolic_expression_parser.yrl", 6).
 yeccpars2_9_(__Stack0) ->
+ [__1 | __Stack] = __Stack0,
+ [begin
+   to_binary ( __1 )
+  end | __Stack].
+
+-compile({inline,yeccpars2_10_/1}).
+-file("src/symbolic_expression_parser.yrl", 2).
+yeccpars2_10_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
    [ __1 ] ++ __2
   end | __Stack].
 
--compile({inline,yeccpars2_10_/1}).
+-compile({inline,yeccpars2_11_/1}).
 -file("src/symbolic_expression_parser.yrl", 1).
-yeccpars2_10_(__Stack0) ->
+yeccpars2_11_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    __2
   end | __Stack].
 
 
--file("src/symbolic_expression_parser.yrl", 16).
+-file("src/symbolic_expression_parser.yrl", 21).
