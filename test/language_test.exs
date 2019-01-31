@@ -1,8 +1,5 @@
 defmodule LanguageTest do
   use ExUnit.Case
+  import Language
   doctest Language
-
-  test "greets the world" do
-    assert Language.hello() == :world
-  end
 end
