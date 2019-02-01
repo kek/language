@@ -17,9 +17,18 @@ defmodule Language do
 
   Examples:
   iex> compile([{:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}], Mathematician)
-  {:ok, {:+, [], [1, 2]}}
   iex> compile([{:atom, 1, 'aliens'}, {:atom, 1, 'built'}, {:atom, 1, 'this'}], Mathematician)
   {:error, "Unknown function (atom) 'aliens' at line 1 with parameters: ['built', 'this']"}
+  {:ok,
+    {:apply,
+      [context: LanguageTest.Mathematician, import: Kernel],
+      [
+        {:__aliases__, [alias: false], [:Kernel]},
+        :+,
+        [1, 2]
+      ]
+    }
+  }
   iex> compile([{:atom, 1, '<?php'}], PHP)
   {:error, "The module PHP doesn't exist"}
   iex> compile([{:atom, 1, 'public'}], Java)

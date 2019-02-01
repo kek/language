@@ -5,7 +5,11 @@ defmodule LanguageTest do
 
   defmodule Mathematician do
     @behaviour Language.Library
-    def call({'add', params}), do: {:+, [], params}
+    def call({'add', params}) do
+      quote do
+        apply(Kernel, :+, unquote(params))
+      end
+    end
   end
 
   defmodule Java do
