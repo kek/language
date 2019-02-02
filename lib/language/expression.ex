@@ -22,8 +22,8 @@ defmodule Language.Expression do
   iex> parse("(42)")
   {:ok, [{:number, 1, 42}]}
 
-  iex> parse("(pete_pete.pete-pete)")
-  {:ok, [{:atom, 1, 'pete_pete.pete-pete'}]}
+  iex> parse("(pete_pete.pete-pete:pete)")
+  {:ok, [{:atom, 1, 'pete_pete.pete-pete:pete'}]}
 
   iex> parse("(+ - / * % $ & = \\\\)")
   {:ok, [{:operator, 1, '+'},

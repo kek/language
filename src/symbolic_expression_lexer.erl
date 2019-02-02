@@ -370,6 +370,8 @@ yystate(2, [95|Ics], Line, Tlen, Action, Alen) ->
     yystate(1, Ics, Line, Tlen+1, Action, Alen);
 yystate(2, [63|Ics], Line, Tlen, Action, Alen) ->
     yystate(1, Ics, Line, Tlen+1, Action, Alen);
+yystate(2, [58|Ics], Line, Tlen, Action, Alen) ->
+    yystate(1, Ics, Line, Tlen+1, Action, Alen);
 yystate(2, [45|Ics], Line, Tlen, Action, Alen) ->
     yystate(1, Ics, Line, Tlen+1, Action, Alen);
 yystate(2, [46|Ics], Line, Tlen, Action, Alen) ->
@@ -385,6 +387,8 @@ yystate(2, Ics, Line, Tlen, Action, Alen) ->
 yystate(1, [95|Ics], Line, Tlen, _, _) ->
     yystate(1, Ics, Line, Tlen+1, 3, Tlen);
 yystate(1, [63|Ics], Line, Tlen, _, _) ->
+    yystate(1, Ics, Line, Tlen+1, 3, Tlen);
+yystate(1, [58|Ics], Line, Tlen, _, _) ->
     yystate(1, Ics, Line, Tlen+1, 3, Tlen);
 yystate(1, [45|Ics], Line, Tlen, _, _) ->
     yystate(1, Ics, Line, Tlen+1, 3, Tlen);
