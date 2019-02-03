@@ -1,8 +1,5 @@
 defmodule Language.Library do
-  @callback generate_ast([name :: list() | params :: list()]) ::
-              {:ok, tuple()} | {:error, tuple()}
-
-  use GenServer
+  @callback generate_ast(parse_tree :: list()) :: {:ok, tuple()} | {:error, tuple()}
 
   defmacro __using__(_opts) do
     quote do
@@ -17,9 +14,7 @@ defmodule Language.Library do
 
         if {function, Enum.count(params)} in available_functions do
           {:ok,
-           quote do
-             apply(unquote(__MODULE__), List.to_atom(unquote(function)), unquote(params))
-           end}
+           quote(do: apply(unquote(__MODULE__), unquote(List.to_atom(function)), unquote(params)))}
         else
           {:error, :no_such_implementation}
         end

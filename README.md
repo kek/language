@@ -1,6 +1,6 @@
 # Language
 
-Parse and run programs.
+Parse symbolic expressions and evaluate them as programs.
 
 ## Installation
 
@@ -38,8 +38,8 @@ iex(2)> Language.Expression.parse("(å)")
 iex(3)> Language.Expression.parse(")")
 {:error, {1, :symbolic_expression_parser, ['syntax error before: ', '\')\'']}}
 iex(4)>   defmodule Mathematician do
-...(4)>     @behaviour Language.Library
-...(4)>     def call({'add', params}), do: {:+, [], params}
+...(4)>     use Language.Library
+...(4)>     def add(a, b), do: a + b
 ...(4)>   end
 {:module, Mathematician,
  <<70, 79, 82, 49, 0, 0, 4, 164, 66, 69, 65, 77, 65, 116, 85, 56, 0, 0, 0, 134,

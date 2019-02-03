@@ -15,19 +15,23 @@ defmodule Language do
   @doc """
   Compiles a symbolic expression to Elixir AST.
 
-  Examples:
-  iex> compile([{:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}], Mathematician)
-  {:ok, {:apply, [context: Language.Library, import: Kernel], [LanguageTest.Mathematician, {{:., [], [{:__aliases__, [alias: false], [:List]}, :to_atom]}, [], ['add']}, [1, 2]]}}
-  iex> compile([{:atom, 1, 'aliens'}, {:atom, 1, 'built'}, {:atom, 1, 'it'}], Mathematician)
-  {:error, "Unknown function (atom) 'aliens' at line 1 with 2 parameters: 'built', 'it'"}
-  iex> compile([{:atom, 1, '<?php'}], PHP)
-  {:error, "The module PHP doesn't exist"}
-  iex> compile([{:atom, 1, 'public'}], Java)
-  {:error, "The module LanguageTest.Java doesn't implement Language.Library behaviour"}
+  ## Examples:
+
+      iex> compile([{:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}], Mathematician)
+      {:ok, {:apply, [context: Language.Library, import: Kernel], [LanguageTest.Mathematician, :add, [1, 2]]}}
+
+      iex> compile([{:atom, 1, 'aliens'}, {:atom, 1, 'built'}, {:atom, 1, 'it'}], Mathematician)
+      {:error, "Unknown function (atom) 'aliens' at line 1 with 2 parameters: 'built', 'it'"}
+
+      iex> compile([{:atom, 1, '<?php'}], PHP)
+      {:error, "The module PHP doesn't exist"}
+
+      iex> compile([{:atom, 1, 'public'}], Java)
+      {:error, "The module LanguageTest.Java doesn't implement Language.Library behaviour"}
   """
   def compile([{type, line, name} | params], library) do
     if :erlang.module_loaded(library) do
-      values = Enum.map(params, &value_of/1)
+      values = Enum.map(params, &value_of(&1, library))
 
       try do
         case library.generate_ast([name] ++ values) do
@@ -59,6 +63,11 @@ defmodule Language do
     result
   end
 
-  defp value_of({:number, _, value}), do: value
-  defp value_of({:atom, _, value}), do: value
+  defp value_of({:number, _, value}, _), do: value
+  defp value_of({:atom, _, value}, _), do: value
+
+  defp value_of(expression, library) when is_list(expression) do
+    {:ok, ast} = compile(expression, library)
+    ast
+  end
 end
