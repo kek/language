@@ -42,13 +42,13 @@ iex(4)>   defmodule Mathematician do
 ...(4)>     def add(a, b), do: a + b
 ...(4)>   end
 {:module, Mathematician,
- <<70, 79, 82, 49, 0, 0, 4, 164, 66, 69, 65, 77, 65, 116, 85, 56, 0, 0, 0, 134,
-    0, 0, 0, 14, 20, 69, 108, 105, 120, 105, 114, 46, 77, 97, 116, 104, 101, 109,
-       97, 116, 105, 99, 105, 97, 110, 8, 95, ...>>, {:call, 1}}
+ <<70, 79, 82, 49, 0, 0, 8, 252, 66, 69, 65, 77, 65, 116, 85, 56, 0, 0, 1, 1, 0,
+   0, 0, 28, 20, 69, 108, 105, 120, 105, 114, 46, 77, 97, 116, 104, 101, 109,
+   97, 116, 105, 99, 105, 97, 110, 8, 95, ...>>, {:add, 2}}
 iex(5)> Language.run("(add 1 1)", Mathematician)
 2
 iex(6)> Language.run("(public static void main)", Mathematician)
 {:error,
- "Unknown function (atom) 'public' at line 1 with parameters: ['static', 'void', 'main']"}
+ "Unknown function (atom) 'public' at line 1 with 3 parameters: ('static', 'void', 'main')"}
 iex(7)>
 ```

@@ -21,7 +21,7 @@ defmodule Language do
       {:ok, {:apply, [context: Language.Library, import: Kernel], [LanguageTest.Mathematician, :add, [1, 2]]}}
 
       iex> compile([{:atom, 1, 'aliens'}, {:atom, 1, 'built'}, {:atom, 1, 'it'}], Mathematician)
-      {:error, "Unknown function (atom) 'aliens' at line 1 with 2 parameters: 'built', 'it'"}
+      {:error, "Unknown function (atom) 'aliens' at line 1 with 2 parameters: ('built', 'it')"}
 
       iex> compile([{:atom, 1, '<?php'}], PHP)
       {:error, "The module PHP doesn't exist"}
@@ -45,9 +45,9 @@ defmodule Language do
               |> Enum.join(", ")
 
             {:error,
-             "Unknown function (#{type}) '#{name}' at line #{line} with #{Enum.count(values)} parameters: #{
+             "Unknown function (#{type}) '#{name}' at line #{line} with #{Enum.count(values)} parameters: (#{
                values_description
-             }"}
+             })"}
         end
       rescue
         UndefinedFunctionError ->
