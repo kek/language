@@ -31,11 +31,11 @@ defmodule LanguageTest do
       assert Language.run("(add 1 2 3)", Mathematician) == 6
 
       assert Language.run("(add 1 2 3 4)", Mathematician) ==
-               {:error, "Unknown function (atom) 'add' at line 1 with 4 parameters: (1, 2, 3, 4)"}
+               {:error, "Unknown function (atom) 'add' at line 1 with 4 parameter(s): (1 2 3 4)"}
 
       assert Language.run("(aliens built it)", Mathematician) ==
                {:error,
-                "Unknown function (atom) 'aliens' at line 1 with 2 parameters: ('built', 'it')"}
+                "Unknown function (atom) 'aliens' at line 1 with 2 parameter(s): (built it)"}
     end
 
     test "control flow" do

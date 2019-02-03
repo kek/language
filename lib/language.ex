@@ -5,6 +5,20 @@ defmodule Language do
   Documentation for Language.
   """
 
+  @spec run(source :: String.t(), library :: Module.t()) :: any()
+  @doc """
+  Runs a program specified by the source code `source` together with
+  the function library `library`. Returns the result of the program,
+  or an {:error, message} tuple in case of an error.
+
+  ## Examples:
+
+      iex> Language.run("(add 1 2)", Mathematician)
+      3
+
+      iex> Language.run("(sub 1 2)", Mathematician)
+      {:error, "Unknown function (atom) 'sub' at line 1 with 2 parameter(s): (1 2)"}
+  """
   def run(source, library) do
     with {:ok, code} <- Expression.parse(source),
          {:ok, ast} <- compile(code, library) do
@@ -21,7 +35,7 @@ defmodule Language do
       {:ok, {:apply, [context: Language.Library, import: Kernel], [LanguageTest.Mathematician, :add, [1, 2]]}}
 
       iex> compile([{:atom, 1, 'aliens'}, {:atom, 1, 'built'}, {:atom, 1, 'it'}], Mathematician)
-      {:error, "Unknown function (atom) 'aliens' at line 1 with 2 parameters: ('built', 'it')"}
+      {:error, "Unknown function (atom) 'aliens' at line 1 with 2 parameter(s): (built it)"}
 
       iex> compile([{:atom, 1, '<?php'}], PHP)
       {:error, "The module PHP doesn't exist"}
@@ -41,11 +55,11 @@ defmodule Language do
           {:error, :no_such_implementation} ->
             values_description =
               values
-              |> Enum.map(&inspect/1)
-              |> Enum.join(", ")
+              |> Enum.map(&"#{&1}")
+              |> Enum.join(" ")
 
             {:error,
-             "Unknown function (#{type}) '#{name}' at line #{line} with #{Enum.count(values)} parameters: (#{
+             "Unknown function (#{type}) '#{name}' at line #{line} with #{Enum.count(values)} parameter(s): (#{
                values_description
              })"}
         end
