@@ -2,23 +2,6 @@
 
 Parse symbolic expressions and evaluate them as programs.
 
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `symbelix` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:symbelix, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/symbelix](https://hexdocs.pm/symbelix).
-
 ## Usage
 
 ```
@@ -52,3 +35,20 @@ iex(6)> Symbelix.run("(public static void main)", Mathematician)
  "Unknown function (atom) 'public' at line 1 with 3 parameters: ('static', 'void', 'main')"}
 iex(7)>
 ```
+
+## Installation
+
+If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+by adding `symbelix` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:symbelix, "~> 0.1.0"}
+  ]
+end
+```
+
+Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
+and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
+be found at [https://hexdocs.pm/symbelix](https://hexdocs.pm/symbelix).

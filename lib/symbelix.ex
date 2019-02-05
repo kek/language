@@ -2,7 +2,7 @@ defmodule Symbelix do
   alias Symbelix.Expression
 
   @moduledoc """
-  Documentation for Symbelix.
+  Expression parser and evaluator.
   """
 
   @spec run(source :: String.t(), library :: Module.t()) :: any()
