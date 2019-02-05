@@ -1,5 +1,5 @@
-defmodule Language.ExpressionTest do
+defmodule Symbelix.ExpressionTest do
   use ExUnit.Case
-  import Language.Expression
-  doctest Language.Expression
+  import Symbelix.Expression
+  doctest Symbelix.Expression
 end

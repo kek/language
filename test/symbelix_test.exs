@@ -1,17 +1,17 @@
-defmodule LanguageTest do
+defmodule SymbelixTest do
   use ExUnit.Case
-  import Language
-  alias LanguageTest.Mathematician
+  import Symbelix
+  alias SymbelixTest.Mathematician
 
   defmodule Mathematician do
-    use Language.Library
+    use Symbelix.Library
 
     def add(a, b), do: a + b
     def add(a, b, c), do: a + b + c
   end
 
   defmodule Controller do
-    use Language.Library
+    use Symbelix.Library
 
     def if('true', yes, _), do: yes
     def if('false', _, no), do: no
@@ -22,29 +22,29 @@ defmodule LanguageTest do
   defmodule Java do
   end
 
-  doctest Language
+  doctest Symbelix
 
   describe "run" do
     test "runs a program" do
-      assert Language.run("(add 1 2)", Mathematician) == 3
+      assert Symbelix.run("(add 1 2)", Mathematician) == 3
 
-      assert Language.run("(add 1 2 3)", Mathematician) == 6
+      assert Symbelix.run("(add 1 2 3)", Mathematician) == 6
 
-      assert Language.run("(add 1 2 3 4)", Mathematician) ==
+      assert Symbelix.run("(add 1 2 3 4)", Mathematician) ==
                {:error, "Unknown function (atom) 'add' at line 1 with 4 parameter(s): (1 2 3 4)"}
 
-      assert Language.run("(aliens built it)", Mathematician) ==
+      assert Symbelix.run("(aliens built it)", Mathematician) ==
                {:error,
                 "Unknown function (atom) 'aliens' at line 1 with 2 parameter(s): (built it)"}
     end
 
     test "control flow" do
-      assert Language.run("(if true yes no)", Controller) == 'yes'
-      assert Language.run("(if false yes no)", Controller) == 'no'
+      assert Symbelix.run("(if true yes no)", Controller) == 'yes'
+      assert Symbelix.run("(if false yes no)", Controller) == 'no'
     end
 
     test "nested evaluation" do
-      assert Language.run("(if true (inc 1) no)", Controller) == 2
+      assert Symbelix.run("(if true (inc 1) no)", Controller) == 2
     end
   end
 end

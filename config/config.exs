@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure your application as:
 #
-#     config :language, key: :value
+#     config :symbelix, key: :value
 #
 # and access this configuration in your application as:
 #
-#     Application.get_env(:language, :key)
+#     Application.get_env(:symbelix, :key)
 #
 # You can also configure a third-party app:
 #

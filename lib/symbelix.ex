@@ -1,8 +1,8 @@
-defmodule Language do
-  alias Language.Expression
+defmodule Symbelix do
+  alias Symbelix.Expression
 
   @moduledoc """
-  Documentation for Language.
+  Documentation for Symbelix.
   """
 
   @spec run(source :: String.t(), library :: Module.t()) :: any()
@@ -13,10 +13,10 @@ defmodule Language do
 
   ## Examples:
 
-      iex> Language.run("(add 1 2)", Mathematician)
+      iex> Symbelix.run("(add 1 2)", Mathematician)
       3
 
-      iex> Language.run("(sub 1 2)", Mathematician)
+      iex> Symbelix.run("(sub 1 2)", Mathematician)
       {:error, "Unknown function (atom) 'sub' at line 1 with 2 parameter(s): (1 2)"}
   """
   def run(source, library) do
@@ -32,7 +32,7 @@ defmodule Language do
   ## Examples:
 
       iex> compile([{:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}], Mathematician)
-      {:ok, {:apply, [context: Language.Library, import: Kernel], [LanguageTest.Mathematician, :add, [1, 2]]}}
+      {:ok, {:apply, [context: Symbelix.Library, import: Kernel], [SymbelixTest.Mathematician, :add, [1, 2]]}}
 
       iex> compile([{:atom, 1, 'aliens'}, {:atom, 1, 'built'}, {:atom, 1, 'it'}], Mathematician)
       {:error, "Unknown function (atom) 'aliens' at line 1 with 2 parameter(s): (built it)"}
@@ -41,7 +41,7 @@ defmodule Language do
       {:error, "The module PHP doesn't exist"}
 
       iex> compile([{:atom, 1, 'public'}], Java)
-      {:error, "The module LanguageTest.Java doesn't implement Language.Library behaviour"}
+      {:error, "The module SymbelixTest.Java doesn't implement Symbelix.Library behaviour"}
   """
   def compile([{type, line, name} | params], library) do
     if :erlang.module_loaded(library) do
@@ -65,7 +65,7 @@ defmodule Language do
         end
       rescue
         UndefinedFunctionError ->
-          {:error, "The module #{inspect(library)} doesn't implement Language.Library behaviour"}
+          {:error, "The module #{inspect(library)} doesn't implement Symbelix.Library behaviour"}
       end
     else
       {:error, "The module #{inspect(library)} doesn't exist"}

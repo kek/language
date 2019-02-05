@@ -1,4 +1,4 @@
-defmodule Language.ParserTest do
+defmodule Symbelix.ParserTest do
   use ExUnit.Case
 
   test "parse expressions with strings" do

@@ -1,4 +1,4 @@
-defmodule Language.Expression do
+defmodule Symbelix.Expression do
   @doc """
   Parses a symbolic expression.
 

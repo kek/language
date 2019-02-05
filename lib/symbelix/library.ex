@@ -1,9 +1,9 @@
-defmodule Language.Library do
+defmodule Symbelix.Library do
   @callback generate_ast(parse_tree :: list()) :: {:ok, tuple()} | {:error, tuple()}
 
   defmacro __using__(_opts) do
     quote do
-      @behaviour Language.Library
+      @behaviour Symbelix.Library
 
       def generate_ast([function | params]) do
         available_functions =

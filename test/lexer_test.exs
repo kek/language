@@ -1,4 +1,4 @@
-defmodule Language.LexerTest do
+defmodule Symbelix.LexerTest do
   use ExUnit.Case
 
   test "lex strings" do
