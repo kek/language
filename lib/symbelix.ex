@@ -21,8 +21,9 @@ defmodule Symbelix do
   """
   def run(source, library) do
     with {:ok, code} <- Expression.parse(source),
-         {:ok, ast} <- compile(code, library) do
-      eval(ast)
+         {:ok, ast} <- compile(code, library),
+         {result, _binding} = Code.eval_quoted(ast) do
+      result
     end
   end
 
@@ -70,11 +71,6 @@ defmodule Symbelix do
     else
       {:error, "The module #{inspect(library)} doesn't exist"}
     end
-  end
-
-  defp eval(ast) do
-    {result, _binding} = Code.eval_quoted(ast)
-    result
   end
 
   defp value_of({:number, _, value}, _), do: value
