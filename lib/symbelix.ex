@@ -75,6 +75,7 @@ defmodule Symbelix do
 
   defp value_of({:number, _, value}, _), do: value
   defp value_of({:atom, _, value}, _), do: value
+  defp value_of({:string, _, value}, _), do: value
 
   defp value_of(expression, library) when is_list(expression) do
     {:ok, ast} = compile(expression, library)

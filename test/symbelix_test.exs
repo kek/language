@@ -19,6 +19,12 @@ defmodule SymbelixTest do
     def inc(n), do: n + 1
   end
 
+  defmodule Talker do
+    use Symbelix.Library
+
+    def say(string), do: string
+  end
+
   defmodule Java do
   end
 
@@ -45,6 +51,10 @@ defmodule SymbelixTest do
 
     test "nested evaluation" do
       assert Symbelix.run("(if true (inc 1) no)", Controller) == 2
+    end
+
+    test "strings are literals" do
+      assert Symbelix.run("(say \"foo\")", Talker) == "foo"
     end
   end
 end
