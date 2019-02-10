@@ -1,7 +1,7 @@
 Definitions.
 
 Whitespace = [\000-\s]
-Atom       = [A-Za-z][A-Za-z!?_\-\.:]+
+Atom       = [A-Za-z][A-Za-z!?_\-\.:]*
 LeftParen  = \(
 RightParen = \)
 Number     = [0-9]+

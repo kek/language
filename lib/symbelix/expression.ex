@@ -35,6 +35,9 @@ defmodule Symbelix.Expression do
              {:operator, 1, '&'},
              {:operator, 1, '='},
              {:operator, 1, '\\\\'}]}
+
+      iex> parse("(f)")
+      {:ok, [{:atom, 1, 'f'}]}
   """
   def parse(code) do
     with {:ok, tokens, _} <- code |> String.to_charlist() |> :symbolic_expression_lexer.string(),
