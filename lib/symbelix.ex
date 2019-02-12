@@ -18,6 +18,9 @@ defmodule Symbelix do
 
       iex> Symbelix.run("(sub 1 2)", Mathematician)
       {:error, "Unknown function (atom) 'sub' at line 1 with 2 parameter(s): (1 2)"}
+
+      iex> Symbelix.run("(sub (add 1 2) 1)", Mathematician)
+      {:error, "Unknown function (atom) 'sub' at line 1 with 2 parameter(s): ((add 1 2) 1)"}
   """
   def run(source, library) do
     with {:ok, code} <- Expression.parse(source),
@@ -55,8 +58,8 @@ defmodule Symbelix do
 
           {:error, :no_such_implementation} ->
             values_description =
-              values
-              |> Enum.map(&"#{&1}")
+              params
+              |> Enum.map(&show/1)
               |> Enum.join(" ")
 
             {:error,
@@ -72,6 +75,16 @@ defmodule Symbelix do
       {:error, "The module #{inspect(library)} doesn't exist"}
     end
   end
+
+  defp show({:number, _, value}), do: "#{value}"
+  defp show({:atom, _, value}), do: "#{value}"
+  defp show({:string, _, value}), do: "#{value}"
+
+  defp show([x | tail]), do: "(" <> show(x) <> show_tail(tail)
+
+  defp show_tail([x | tail]), do: " " <> show(x) <> show_tail(tail)
+
+  defp show_tail([]), do: ")"
 
   defp value_of({:number, _, value}, _), do: value
   defp value_of({:atom, _, value}, _), do: value
