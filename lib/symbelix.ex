@@ -21,6 +21,9 @@ defmodule Symbelix do
 
       iex> Symbelix.run("(sub (add 1 2) 1)", Mathematician)
       {:error, "Unknown function (atom) 'sub' at line 1 with 2 parameter(s): ((add 1 2) 1)"}
+
+      iex> Symbelix.run("(first [1 2])", ListProcessor)
+      1
   """
   def run(source, library) do
     with {:ok, code} <- Expression.parse(source),
@@ -89,6 +92,7 @@ defmodule Symbelix do
   defp value_of({:number, _, value}, _), do: value
   defp value_of({:atom, _, value}, _), do: value
   defp value_of({:string, _, value}, _), do: value
+  defp value_of({:list, value}, binding), do: Enum.map(value, &value_of(&1, binding))
 
   defp value_of(expression, library) when is_list(expression) do
     {:ok, ast} = compile(expression, library)

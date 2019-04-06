@@ -25,6 +25,12 @@ defmodule SymbelixTest do
     def say(string), do: string
   end
 
+  defmodule ListProcessor do
+    use Symbelix.Library
+
+    def first([head | _]), do: head
+  end
+
   defmodule Java do
   end
 
