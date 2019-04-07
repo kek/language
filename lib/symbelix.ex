@@ -27,9 +27,17 @@ defmodule Symbelix do
   """
   def run(source, library) do
     with {:ok, code} <- Expression.parse(source),
-         {:ok, ast} <- compile(code, library),
-         {result, _binding} = Code.eval_quoted(ast) do
-      result
+         {:ok, ast} <- compile(code, library) do
+      case ast do
+        {:proc, proc} ->
+          {:proc, proc}
+
+        _ ->
+          {result, _binding} = Code.eval_quoted(ast)
+          result
+      end
+    else
+      error -> error
     end
   end
 
@@ -49,7 +57,29 @@ defmodule Symbelix do
 
       iex> compile([{:atom, 1, 'public'}], Java)
       {:error, "The module SymbelixTest.Java doesn't implement Symbelix.Library behaviour"}
+
+      iex> compile([{:atom, 1, 'proc'}, {:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}], Mathematician)
+      {:ok, {:proc, [{:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}]}}
   """
+  def compile([{:atom, _line, 'apply'} | [[{:atom, _, 'proc'} | code]]], library) do
+    {:ok, ast} = compile(code, library)
+
+    {:ok, ast}
+  end
+
+  def compile([{:atom, _line, 'apply'} | [params]], library) do
+    {:ok, ast} = compile(params, library)
+    {{:proc, code}, []} = Code.eval_quoted(ast)
+
+    {{:ok, result}, []} = compile(code, library) |> Code.eval_quoted()
+
+    {:ok, result}
+  end
+
+  def compile([{:atom, _, 'proc'} | params], _) do
+    {:ok, {:proc, params}}
+  end
+
   def compile([{type, line, name} | params], library) do
     if :erlang.module_loaded(library) do
       values = Enum.map(params, &value_of(&1, library))
@@ -93,6 +123,10 @@ defmodule Symbelix do
   defp value_of({:atom, _, value}, _), do: value
   defp value_of({:string, _, value}, _), do: value
   defp value_of({:list, value}, binding), do: Enum.map(value, &value_of(&1, binding))
+
+  defp value_of([{:atom, _line, 'proc'} | proc], _) do
+    {:proc, Macro.escape(proc)}
+  end
 
   defp value_of(expression, library) when is_list(expression) do
     {:ok, ast} = compile(expression, library)

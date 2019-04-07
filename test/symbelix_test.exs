@@ -34,6 +34,41 @@ defmodule SymbelixTest do
   defmodule Java do
   end
 
+  defmodule Stateful do
+    use Symbelix.Library
+    require Logger
+    alias SymbelixTest.Memory
+
+    def add(a, b), do: a + b
+
+    def set(name, value) do
+      :ok = Memory.set(Memory, name, value)
+      "ok"
+    end
+
+    def get(name) do
+      Memory.get(Memory, name)
+    end
+
+    def inc(name) do
+      set(name, get(name) + 1)
+    end
+  end
+
+  defmodule Memory do
+    def start_link do
+      Agent.start_link(fn -> %{} end)
+    end
+
+    def set(pid, key, value) do
+      Agent.update(pid, fn state -> Map.put(state, key, value) end)
+    end
+
+    def get(pid, key) do
+      Agent.get(pid, fn state -> Map.get(state, key) end)
+    end
+  end
+
   doctest Symbelix
 
   describe "run" do
@@ -61,6 +96,33 @@ defmodule SymbelixTest do
 
     test "strings are literals" do
       assert Symbelix.run("(say \"foo\")", Talker) == "foo"
+    end
+
+    test "delayed computation" do
+      assert Symbelix.run("(proc add 1 2)", Mathematician) ==
+               {:proc, [{:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}]}
+    end
+
+    test "explicit evaluation" do
+      assert Symbelix.run("(apply (proc add 1 2))", Mathematician) == 3
+    end
+
+    test "running a proc" do
+      assert Symbelix.run("(proc first [1 2])", ListProcessor) ==
+               {:proc, [{:atom, 1, 'first'}, {:list, [{:number, 1, 1}, {:number, 1, 2}]}]}
+    end
+
+    test "delayed evaluation is delayed" do
+      {:ok, memory} = Memory.start_link()
+      Process.register(memory, Memory)
+      assert Symbelix.run("(set x 1)", Stateful) == "ok"
+      assert Symbelix.run("(get x)", Stateful) == 1
+      assert Symbelix.run("(apply (proc inc x))", Stateful) == "ok"
+      assert Symbelix.run("(get x)", Stateful) == 2
+      assert Symbelix.run("(set f (proc inc x))", Stateful) == "ok"
+      assert Symbelix.run("(get x)", Stateful) == 2
+      assert Symbelix.run("(apply (get f))", Stateful) == "ok"
+      assert Symbelix.run("(get x)", Stateful) == 3
     end
   end
 end
