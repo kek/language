@@ -28,6 +28,7 @@ defmodule SymbelixTest do
   defmodule ListProcessor do
     use Symbelix.Library
 
+    def identity(x), do: x
     def first([head | _]), do: head
   end
 
@@ -123,6 +124,10 @@ defmodule SymbelixTest do
       assert Symbelix.run("(get x)", Stateful) == 2
       assert Symbelix.run("(apply (get f))", Stateful) == "ok"
       assert Symbelix.run("(get x)", Stateful) == 3
+    end
+
+    test "showing a list" do
+      assert Symbelix.run("(identity [1 2 3])", ListProcessor) == [1, 2, 3]
     end
   end
 end

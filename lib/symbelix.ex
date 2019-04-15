@@ -112,7 +112,7 @@ defmodule Symbelix do
   defp show({:number, _, value}), do: "#{value}"
   defp show({:atom, _, value}), do: "#{value}"
   defp show({:string, _, value}), do: "#{value}"
-
+  defp show({:list, value}), do: inspect(value)
   defp show([x | tail]), do: "(" <> show(x) <> show_tail(tail)
 
   defp show_tail([x | tail]), do: " " <> show(x) <> show_tail(tail)
