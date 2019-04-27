@@ -1,4 +1,7 @@
 defmodule Symbelix.Library do
+  @moduledoc """
+  Use this to define a library of functions for a Symbelix language.
+  """
   @callback generate_ast(parse_tree :: list()) :: {:ok, tuple()} | {:error, tuple()}
 
   defmacro __using__(_opts) do
