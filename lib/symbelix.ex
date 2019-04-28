@@ -26,6 +26,8 @@ defmodule Symbelix do
       1
   """
   def run(source, library) do
+    Code.ensure_compiled(library)
+
     with {:ok, code} <- Expression.parse(source),
          {:ok, ast} <- compile(code, library) do
       case ast do
@@ -106,6 +108,54 @@ defmodule Symbelix do
       end
     else
       {:error, "The module #{inspect(library)} doesn't exist"}
+    end
+  end
+
+  def repl(library \\ Symbelix.Library.Standard) do
+    Code.ensure_compiled(library)
+
+    unless Process.whereis(Symbelix.Library.Memory) do
+      {:ok, memory} = Symbelix.Library.Memory.start_link()
+      Process.register(memory, Symbelix.Library.Memory)
+    end
+
+    source = IO.gets("> ")
+
+    case source do
+      :eof ->
+        IO.puts("\nGoodbye")
+
+      "q\n" ->
+        IO.puts("Goodbye")
+
+      "r\n" ->
+        IO.inspect(IEx.Helpers.recompile(), label: "recompile")
+        repl(library)
+
+      source ->
+        try do
+          with {:ok, code} <- Expression.parse(source),
+               ^code <- IO.inspect(code, label: "parsed"),
+               {:ok, ast} <- compile(code, library),
+               ^ast <- IO.inspect(ast, label: "compiled") do
+            case ast do
+              {:proc, proc} ->
+                IO.inspect({:proc, proc})
+
+              _ ->
+                {result, _binding} = Code.eval_quoted(ast)
+                IO.inspect(result)
+            end
+          else
+            error -> IO.inspect(error)
+          end
+        rescue
+          exception ->
+            IO.puts("Error: #{inspect(exception)}")
+            IO.inspect(__STACKTRACE__, label: "stacktrace")
+        end
+
+        repl(library)
     end
   end
 
