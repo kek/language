@@ -25,21 +25,21 @@ defmodule Symbelix do
       iex> Symbelix.run("(first [1 2])", ListProcessor)
       1
   """
-  def run(source, library) do
-    Code.ensure_compiled(library)
-
+  def run(source, library, debug \\ fn x, _ -> x end) do
     with {:ok, code} <- Expression.parse(source),
-         {:ok, ast} <- compile(code, library) do
+         ^code <- debug.(code, label: "code"),
+         {:ok, ast} <- compile(code, library),
+         ^ast <- debug.(ast, label: "ast") do
       case ast do
         {:proc, proc} ->
-          {:proc, proc}
+          {:proc, proc} |> debug.([])
 
         _ ->
           {result, _binding} = Code.eval_quoted(ast)
-          result
+          result |> debug.([])
       end
     else
-      error -> error
+      error -> error |> debug.([])
     end
   end
 
@@ -83,7 +83,7 @@ defmodule Symbelix do
   end
 
   def compile([{type, line, name} | params], library) do
-    if :erlang.module_loaded(library) do
+    if Code.ensure_compiled?(library) do
       values = Enum.map(params, &value_of(&1, library))
 
       try do
@@ -112,8 +112,6 @@ defmodule Symbelix do
   end
 
   def repl(library \\ Symbelix.Library.Standard) do
-    Code.ensure_compiled(library)
-
     unless Process.whereis(Symbelix.Library.Memory) do
       {:ok, memory} = Symbelix.Library.Memory.start_link()
       Process.register(memory, Symbelix.Library.Memory)
@@ -134,21 +132,7 @@ defmodule Symbelix do
 
       source ->
         try do
-          with {:ok, code} <- Expression.parse(source),
-               ^code <- IO.inspect(code, label: "parsed"),
-               {:ok, ast} <- compile(code, library),
-               ^ast <- IO.inspect(ast, label: "compiled") do
-            case ast do
-              {:proc, proc} ->
-                IO.inspect({:proc, proc})
-
-              _ ->
-                {result, _binding} = Code.eval_quoted(ast)
-                IO.inspect(result)
-            end
-          else
-            error -> IO.inspect(error)
-          end
+          run(source, library, &IO.inspect/2)
         rescue
           exception ->
             IO.puts("Error: #{inspect(exception)}")
