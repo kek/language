@@ -98,7 +98,9 @@ defmodule SymbelixTest do
     test "strings are literals" do
       assert Symbelix.run("(say \"foo\")", Talker) == "foo"
     end
+  end
 
+  describe "code as data" do
     test "delayed computation" do
       assert Symbelix.run("(proc add 1 2)", Mathematician) ==
                {:proc, [{:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}]}
