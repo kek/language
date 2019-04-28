@@ -5,9 +5,7 @@ defmodule Symbelix.Library.Standard do
   def add(a, b), do: a + b
   def add(a, b, c), do: a + b + c
 
-  def if('true', yes, _), do: yes
   def if(true, yes, _), do: yes
-  def if('false', _, no), do: no
   def if(false, _, no), do: no
 
   def inc(n), do: n + 1
@@ -32,5 +30,14 @@ defmodule Symbelix.Library.Standard do
 
   def progn(items) do
     Enum.reduce(items, fn item, _ -> item end)
+  end
+
+  def map(list, function) do
+    list
+    |> Enum.map(fn item ->
+      {:ok, ast} = generate_ast([function, item])
+      {result, _binding} = Code.eval_quoted(ast)
+      result
+    end)
   end
 end
