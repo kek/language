@@ -113,6 +113,33 @@ defmodule SymbelixTest do
                {:proc, [{:atom, 1, 'first'}, {:list, [{:number, 1, 1}, {:number, 1, 2}]}]}
     end
 
+    test "running a proc stored in a variable" do
+      Symbelix.Library.Memory.start_default()
+      library = Symbelix.Library.Standard
+      assert Symbelix.run("(set check-x (proc if (eq (get x) 0) zero nonzero))", library) == "ok"
+      assert Symbelix.run("(set x 0)", library) == "ok"
+      assert Symbelix.run("(eval (get check-x))", library) == 'zero'
+      assert Symbelix.run("(set x 1)", library) == "ok"
+      assert Symbelix.run("(eval (get check-x))", library) == 'nonzero'
+    end
+
+    test "running code from a proc stored in a variable" do
+      Symbelix.Library.Memory.start_default()
+      library = Symbelix.Library.Standard
+
+      assert Symbelix.run("(set check-x (proc if (eq (get x) 0) (get y) (get z)))", library) ==
+               "ok"
+
+      assert Symbelix.run("(set x 0)", library) == "ok"
+      assert Symbelix.run("(set y firsty)", library) == "ok"
+      assert Symbelix.run("(set z firstz)", library) == "ok"
+      assert Symbelix.run("(eval (get check-x))", library) == 'firsty'
+      assert Symbelix.run("(set x 1)", library) == "ok"
+      assert Symbelix.run("(eval (get check-x))", library) == 'firstz'
+      assert Symbelix.run("(set z secondz)", library) == "ok"
+      assert Symbelix.run("(eval (get check-x))", library) == 'secondz'
+    end
+
     test "delayed evaluation is delayed" do
       {:ok, memory} = Memory.start_link()
       Process.register(memory, Memory)
