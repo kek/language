@@ -63,13 +63,13 @@ defmodule Symbelix do
       iex> compile([{:atom, 1, 'proc'}, {:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}], Mathematician)
       {:ok, {:proc, [{:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}]}}
   """
-  def compile([{:atom, _line, 'apply'} | [[{:atom, _, 'proc'} | code]]], library) do
+  def compile([{:atom, _line, 'eval'} | [[{:atom, _, 'proc'} | code]]], library) do
     {:ok, ast} = compile(code, library)
 
     {:ok, ast}
   end
 
-  def compile([{:atom, _line, 'apply'} | [params]], library) do
+  def compile([{:atom, _line, 'eval'} | [params]], library) do
     {:ok, ast} = compile(params, library)
     {{:proc, code}, []} = Code.eval_quoted(ast)
 

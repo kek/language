@@ -105,7 +105,7 @@ defmodule SymbelixTest do
     end
 
     test "explicit evaluation" do
-      assert Symbelix.run("(apply (proc add 1 2))", Mathematician) == 3
+      assert Symbelix.run("(eval (proc add 1 2))", Mathematician) == 3
     end
 
     test "running a proc" do
@@ -118,11 +118,11 @@ defmodule SymbelixTest do
       Process.register(memory, Memory)
       assert Symbelix.run("(set x 1)", Stateful) == "ok"
       assert Symbelix.run("(get x)", Stateful) == 1
-      assert Symbelix.run("(apply (proc inc x))", Stateful) == "ok"
+      assert Symbelix.run("(eval (proc inc x))", Stateful) == "ok"
       assert Symbelix.run("(get x)", Stateful) == 2
       assert Symbelix.run("(set f (proc inc x))", Stateful) == "ok"
       assert Symbelix.run("(get x)", Stateful) == 2
-      assert Symbelix.run("(apply (get f))", Stateful) == "ok"
+      assert Symbelix.run("(eval (get f))", Stateful) == "ok"
       assert Symbelix.run("(get x)", Stateful) == 3
     end
 
