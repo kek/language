@@ -20,9 +20,6 @@ defmodule SymbelixTest do
 
       assert Symbelix.run("(add 1 2 3)", Mathematician) == 6
 
-      assert Symbelix.run("(add 1 2 3 4)", Mathematician) ==
-               {:error, "Unknown function (atom) 'add' at line 1 with 4 parameter(s): (1 2 3 4)"}
-
       assert Symbelix.run("(aliens built it)", Mathematician) ==
                {:error,
                 "Unknown function (atom) 'aliens' at line 1 with 2 parameter(s): (built it)"}

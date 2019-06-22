@@ -2,37 +2,37 @@ defmodule Symbelix.Library.Standard do
   use Symbelix.Library
   alias Symbelix.Library.Memory
 
-  def add(a, b), do: a + b
-  def add(a, b, c), do: a + b + c
+  def add([a, b]), do: a + b
+  def add([a, b, c]), do: a + b + c
 
-  def if(true, yes, _), do: yes
-  def if(false, _, no), do: no
+  def if([true, yes, _]), do: yes
+  def if([false, _, no]), do: no
 
-  def inc(n), do: n + 1
+  def inc([n]), do: n + 1
 
-  def eq(a, b), do: a == b
+  def eq([a, b]), do: a == b
 
-  def identity(x), do: x
-  def first([head | _]), do: head
+  def identity([x]), do: x
+  def first([[head | _]]), do: head
 
-  def set(name, value) do
+  def set([name, value]) do
     :ok = Memory.set(Memory, name, value)
     "ok"
   end
 
-  def get(name) do
+  def get([name]) do
     Memory.get(Memory, name)
   end
 
-  def incvar(name) do
-    set(name, get(name) + 1)
+  def incvar([name]) do
+    set([name, get(name) + 1])
   end
 
-  def progn(items) do
+  def progn([items]) do
     Enum.reduce(items, fn item, _ -> item end)
   end
 
-  def map(list, function) do
+  def map([list, function]) do
     list
     |> Enum.map(fn item ->
       {:ok, ast} = generate_ast([function, item])

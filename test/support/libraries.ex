@@ -2,30 +2,30 @@ defmodule Symbelix.TestHelpers.Libraries do
   defmodule Mathematician do
     use Symbelix.Library
 
-    def add(a, b), do: a + b
-    def add(a, b, c), do: a + b + c
+    def add([a, b]), do: a + b
+    def add([a, b, c]), do: a + b + c
   end
 
   defmodule Controller do
     use Symbelix.Library
 
-    def if('true', yes, _), do: yes
-    def if('false', _, no), do: no
+    def if(['true', yes, _]), do: yes
+    def if(['false', _, no]), do: no
 
-    def inc(n), do: n + 1
+    def inc([n]), do: n + 1
   end
 
   defmodule Talker do
     use Symbelix.Library
 
-    def say(string), do: string
+    def say([string]), do: string
   end
 
   defmodule ListProcessor do
     use Symbelix.Library
 
-    def identity(x), do: x
-    def first([head | _]), do: head
+    def identity([x]), do: x
+    def first([[head | _]]), do: head
   end
 
   defmodule Java do
@@ -36,19 +36,19 @@ defmodule Symbelix.TestHelpers.Libraries do
     require Logger
     alias Symbelix.TestHelpers.Libraries.Memory
 
-    def add(a, b), do: a + b
+    def add([a, b]), do: a + b
 
-    def set(name, value) do
+    def set([name, value]) do
       :ok = Memory.set(Memory, name, value)
       "ok"
     end
 
-    def get(name) do
+    def get([name]) do
       Memory.get(Memory, name)
     end
 
-    def inc(name) do
-      set(name, get(name) + 1)
+    def inc([name]) do
+      set([name, get([name]) + 1])
     end
   end
 

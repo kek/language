@@ -15,9 +15,11 @@ defmodule Symbelix.Library do
             {Atom.to_charlist(fun), arity}
           end)
 
-        if {function, Enum.count(params)} in available_functions do
+        if {function, 1} in available_functions do
           {:ok,
-           quote(do: apply(unquote(__MODULE__), unquote(List.to_atom(function)), unquote(params)))}
+           quote(
+             do: apply(unquote(__MODULE__), unquote(List.to_atom(function)), [unquote(params)])
+           )}
         else
           {:error, :no_such_implementation}
         end

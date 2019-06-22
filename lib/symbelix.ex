@@ -49,7 +49,7 @@ defmodule Symbelix do
   ## Examples:
 
       iex> compile([{:atom, 1, 'add'}, {:number, 1, 1}, {:number, 1, 2}], Mathematician)
-      {:ok, {:apply, [context: Symbelix.Library, import: Kernel], [Symbelix.TestHelpers.Libraries.Mathematician, :add, [1, 2]]}}
+      {:ok, {:apply, [context: Symbelix.Library, import: Kernel], [Symbelix.TestHelpers.Libraries.Mathematician, :add, [[1, 2]]]}}
 
       iex> compile([{:atom, 1, 'aliens'}, {:atom, 1, 'built'}, {:atom, 1, 'it'}], Mathematician)
       {:error, "Unknown function (atom) 'aliens' at line 1 with 2 parameter(s): (built it)"}
